@@ -12,14 +12,24 @@ print("\nOriginal shape:", df.shape)
 df.columns = df.columns.astype(str).str.strip()
 
 # 2. Clean Car Name (remove extra spaces and standardize capitalization)
+# 2. Clean Vehicle Name
+
 df["Car Name"] = (
     df["Car Name"]
     .astype("string")
     .str.strip()
+    .str.replace(r"_+", " ", regex=True)
     .str.replace(r"\s+", " ", regex=True)
+    .str.replace(r"\.+$", "", regex=True)
     .str.title()
 )
-df["Car Name"] = df["Car Name"].replace("", pd.NA).fillna("Unknown")
+
+df["Car Name"] = df["Car Name"].replace(
+    ["", "NULL", "Null", "null", "---", "NA", "N/A"],
+    pd.NA
+)
+
+df["Car Name"] = df["Car Name"].fillna("Unknown")
 
 # 3. Clean Year
 # Convert values such as "09" to 2009 and reject impossible years.
